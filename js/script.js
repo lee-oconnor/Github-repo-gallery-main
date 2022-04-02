@@ -2,7 +2,12 @@
 const overview = document.querySelector(".overview");
 const username = "lee-oconnor";
 const repoList = document.querySelector(".repo-list");
+const repoSection = document.querySelector(".repos");
+const repoData = document.querySelector(".repo-data");
 
+
+
+/*Fetch profile from GitHub */
 const profileFetch = async function () {
     const res = await fetch (`https://api.github.com/users/${username}`);
     const data = await res.json();  
@@ -11,6 +16,8 @@ const profileFetch = async function () {
 };
 profileFetch();
 
+
+/*Fetch my user data to popluate GUI with avatar, bio, location, repos */
 const userInfo = function (data) {
     const userStats = document.createElement("div");
     userStats.classList.add("user-info");
@@ -29,19 +36,42 @@ const userInfo = function (data) {
     fetchRepos();
 };
 
+
+/*Get my repo list, order from most recently updated, and list 100 per page */
 const fetchRepos = async function () {
     const reposList = await fetch (`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
     const myRepos = await reposList.json();
     displayRepos(myRepos);
 };
 
-
+/*Display repos on the GUI */
 const displayRepos = function (repos) {
     for (let repo of repos) {
         const listItem = document.createElement("li");
         listItem.classList.add("repo");
         listItem.innerHTML = `<h3>${repo.name}</h3>`;
         repoList.append(listItem);
-    
+    console.log(repo);
     }
+};
+
+/*Event Listener to target Repo Names */
+repoList.addEventListener("click", function (e) {
+    if (e.target.matches("h3")) {
+        const repoName = e.target.innerText;
+        getRepoInfo(repoName);
+    }
+    
+});
+
+
+/*Async Function to get specific repo info */
+
+const getRepoInfo = async function (repoName) {
+    const specificRepoData = await fetch (`https://api.github.com/repos/${username}/${repoName}`);
+    const repoInfo = await specificRepoData.json();
+    console.log(repoInfo);
+    const fetchLanguages = await fetch (repoInfo.languages_url);
+    const languageData = await fetchLanguages.json();
+    console.log(languageData);
 };
