@@ -1,5 +1,6 @@
 /*Div where my profile info will appear */
 const overview = document.querySelector(".overview");
+
 const username = "lee-oconnor";
 const repoList = document.querySelector(".repo-list");
 const repoSection = document.querySelector(".repos");
@@ -17,7 +18,7 @@ const profileFetch = async function () {
 profileFetch();
 
 
-/*Fetch my user data to popluate GUI with avatar, bio, location, repos */
+/*User data to popluate GUI with avatar, bio, location, repos */
 const userInfo = function (data) {
     const userStats = document.createElement("div");
     userStats.classList.add("user-info");
@@ -73,5 +74,30 @@ const getRepoInfo = async function (repoName) {
     console.log(repoInfo);
     const fetchLanguages = await fetch (repoInfo.languages_url);
     const languageData = await fetchLanguages.json();
-    console.log(languageData);
+    
+    const languages = [];
+    for (let key in languageData) {
+        languages.push(key);
+    }
+    displayRepoData(repoInfo, languages);
+};
+
+/*Display specfic repo info on GUI*/
+
+const displayRepoData = function (repoInfo, languages) {
+    repoData.innerHTML = "";
+    const repoDataDiv = document.createElement("div");
+    repoDataDiv.innerHTML = `
+    <div>
+        <h3>Name: ${repoInfo.name} </h3>
+            <p>Description: ${repoInfo.description} </p>
+            <p>Default Branch: ${repoInfo.default_branch}</p>
+            <p>Languages: ${languages.join(", ")}</p>
+            <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>
+    </div>
+    `;
+    repoData.append(repoDataDiv);
+    repoData.classList.remove("hide");
+    repoSection.classList.add("hide");
+
 };
