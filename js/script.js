@@ -5,6 +5,8 @@ const username = "lee-oconnor";
 const repoList = document.querySelector(".repo-list");
 const repoSection = document.querySelector(".repos");
 const repoData = document.querySelector(".repo-data");
+const backToGalleryButton = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 
 
@@ -47,6 +49,7 @@ const fetchRepos = async function () {
 
 /*Display repos on the GUI */
 const displayRepos = function (repos) {
+    filterInput.classList.remove("hide");
     for (let repo of repos) {
         const listItem = document.createElement("li");
         listItem.classList.add("repo");
@@ -99,5 +102,30 @@ const displayRepoData = function (repoInfo, languages) {
     repoData.append(repoDataDiv);
     repoData.classList.remove("hide");
     repoSection.classList.add("hide");
+    backToGalleryButton.classList.remove("hide");
 
 };
+
+
+/*Back to gallery button */
+backToGalleryButton.addEventListener("click", function () {
+    repoSection.classList.remove("hide");
+    repoData.classList.add("hide");
+    backToGalleryButton.classList.add("hide");
+});
+
+/*Dynamic search */
+filterInput.addEventListener("input", function (e) {
+    const searchText = e.target.value;
+    const repos = document.querySelectorAll(".repo");
+    const lowerCaseSearch = searchText.toLowerCase();
+
+    for (const repo of repos) {
+        const repoLowerText = repo.innerText.toLowerCase();
+        if (!repoLowerText.includes(lowerCaseSearch)) {
+            repo.classList.add("hide"); 
+        } else {
+            repo.classList.remove("hide");
+        }
+    }
+});
